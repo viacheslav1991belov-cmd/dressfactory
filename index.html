@@ -1529,9 +1529,26 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       chip.classList.toggle('on', p > .95);
     };
 
+    // после первого полного просмотра сцена больше не держит экран: блок становится обычным
+    let done = false, collapsed = false;
+    const collapse = y => {
+      collapsed = true; pinned = false;
+      const below = y > top + h, oldH = h;
+      root.classList.remove('js-scene');
+      const nh = sec.offsetHeight;
+      apply(1);
+      if (below) {
+        const t = y - (oldH - nh);
+        if (lenis) lenis.scrollTo(t, { immediate: true, force: true });
+        else scrollTo({ top: t, behavior: 'instant' });
+      }
+      remeasure();
+    };
     const update = y => {
+      if (done && !collapsed) { if (y > top + h || y + vh < top) collapse(y); return; }
       if (!pinned || y + vh < top - 200 || y > top + h + 200) return;
       const p = clamp((y + HEAD - top) / Math.max(1, h - (vh - HEAD)));
+      if (p >= 1) done = true;
       if (Math.abs(p - lastP) < 1e-5) return;
       lastP = p;
       apply(p);
@@ -1539,7 +1556,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     const measure = () => {
       top = docTop(sec); h = sec.offsetHeight; lastP = -1;
       pinned = getComputedStyle(pinEl).position === 'sticky';
-      if (!pinned) apply(.83);
+      if (!pinned) apply(collapsed ? 1 : .83);
     };
     apply(0);
     return { update, measure };
