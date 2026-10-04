@@ -401,6 +401,15 @@ section{position:relative}
 .form .done pre{margin:0;align-self:stretch;white-space:pre-wrap;font-family:inherit;font-size:15px;background:var(--paper);border-radius:14px;padding:16px;max-height:220px;overflow:auto}
 .form .done .row{display:flex;flex-wrap:wrap;gap:12px}
 .form .done[hidden]{display:none}
+.modal{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:20px;background:rgba(8,12,30,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:mFade .3s ease}
+.modal[hidden]{display:none}
+.modal-card{width:min(420px,100%);background:var(--white);color:var(--ink);border-radius:28px;padding:36px 32px 32px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;box-shadow:0 40px 90px rgba(3,6,20,.45);animation:mPop .45s var(--ease)}
+.modal-card h3{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.modal-card p{color:var(--ink-2);font-size:17px}
+.modal-card .btn{margin-top:8px;min-width:180px}
+html.needle .modal-card .btn{cursor:none!important}
+@keyframes mFade{from{opacity:0}}
+@keyframes mPop{from{opacity:0;transform:translateY(16px) scale(.96)}}
 .ok{width:64px;height:64px}
 .ok circle{fill:rgba(217,43,48,.08);stroke:var(--red);stroke-width:2;stroke-dasharray:5 4;transform-origin:center;animation:okc .6s var(--ease) backwards}
 .ok path{fill:none;stroke:var(--red);stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:0;animation:okp .6s .35s cubic-bezier(.6,0,.2,1) backwards}
@@ -874,16 +883,18 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       <div class="field full"><label for="f-msg">Комментарий</label><textarea id="f-msg" name="msg" placeholder="Что нужно сшить, сколько штук, к какой дате" data-lenis-prevent></textarea></div>
       <div class="err" id="formErr" hidden></div>
       <button class="btn btn-red mag" type="submit">Отправить заявку</button>
-      <div class="done" id="formDone" hidden>
-        <svg class="ok" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"></circle><path pathLength="1" d="M19 33 l9 9 l18 -19"></path></svg>
-        <h3>Заявка готова</h3>
-        <p>Скопируйте её и отправьте нам на info@dressfactory.ru.</p>
-        <pre id="formText" data-lenis-prevent></pre>
-        <div class="row"><button class="btn btn-red" type="button" id="copyOrder">Скопировать заявку</button><button class="btn btn-navy" type="button" id="editOrder">Изменить</button></div>
-      </div>
     </form>
   </div>
 </section>
+
+<div class="modal" id="okModal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="okTitle">
+    <svg class="ok" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28"></circle><path pathLength="1" d="M19 33 l9 9 l18 -19"></path></svg>
+    <h3 id="okTitle">Заявка принята</h3>
+    <p>Мы свяжемся с вами в течение суток.</p>
+    <button class="btn btn-red" type="button" id="okClose">Хорошо</button>
+  </div>
+</div>
 </main>
 
 <footer class="foot" id="foot">
@@ -1913,7 +1924,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
   /* ---------- копирование ---------- */
   const selectText = btn => {
-    const el = btn.id === 'copyMail' ? $('#mailAddr') : $('#formText');
+    const el = $('#mailAddr');
     const r = document.createRange(); r.selectNodeContents(el);
     const s = getSelection(); s.removeAllRanges(); s.addRange(r);
     btn.textContent = 'Выделено, нажмите Ctrl+C';
@@ -1927,8 +1938,13 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
   $('#copyMail').addEventListener('click', e => copy('info@dressfactory.ru', e.currentTarget));
 
   /* ---------- заявка ---------- */
-  const form = $('#orderForm'), err = $('#formErr'), done = $('#formDone'), txt = $('#formText');
-  const fields = [...form.querySelectorAll('.field, button[type=submit]')];
+  const form = $('#orderForm'), err = $('#formErr'), modal = $('#okModal'), okClose = $('#okClose');
+  let lastFocus = null;
+  const closeModal = () => {
+    modal.hidden = true;
+    if (lenis) lenis.start();
+    if (lastFocus) lastFocus.focus();
+  };
   form.addEventListener('submit', e => {
     e.preventDefault();
     const v = id => document.getElementById(id).value.trim();
@@ -1937,15 +1953,15 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     if (!v('f-contact')) problems.push('оставьте телефон или почту, чтобы мы могли ответить');
     if (problems.length) { err.textContent = 'Проверьте форму: ' + problems.join(', ') + '.'; err.hidden = false; return; }
     err.hidden = true;
-    txt.textContent = 'Заявка с сайта DressFactory\n'
-      + 'Имя: ' + v('f-name') + '\n'
-      + 'Контакт: ' + v('f-contact') + '\n'
-      + (v('f-msg') ? 'Комментарий: ' + v('f-msg') : '');
-    fields.forEach(f => { f.hidden = true; });
-    done.hidden = false;
+    form.reset();
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    if (lenis) lenis.stop();
+    okClose.focus();
   });
-  $('#copyOrder').addEventListener('click', e => copy(txt.textContent, e.currentTarget));
-  $('#editOrder').addEventListener('click', () => { fields.forEach(f => { f.hidden = false; }); done.hidden = true; });
+  okClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
 
   /* ---------- запуск ---------- */
   measure();
