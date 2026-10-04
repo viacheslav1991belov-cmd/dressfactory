@@ -284,6 +284,18 @@ section{position:relative}
 .scene-chip b{background:var(--red);color:var(--white);border-radius:999px;padding:4px 10px;font-size:11px;letter-spacing:.08em}
 .scene-chip.on{opacity:1;transform:none}
 .scene-cap{display:none}
+.scene-tip{font-size:15px;color:var(--on-navy-2);display:flex;align-items:center;gap:8px;animation:descIn .6s var(--ease)}
+.scene-tip::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--red-lite);box-shadow:0 0 0 0 rgba(255,90,95,.6);animation:tipPulse 1.8s ease-out infinite}
+@keyframes tipPulse{to{box-shadow:0 0 0 10px rgba(255,90,95,0)}}
+.scene-tap .scene-steps li{cursor:pointer;border-radius:16px;margin-left:-10px;padding-left:10px;transition:background .25s}
+.scene-tap .scene-steps li:hover{background:rgba(255,255,255,.05)}
+.scene-tap .scene-steps li:focus-visible{outline:2px solid var(--red-lite);outline-offset:2px}
+.scene-tap .scene-steps .n{border-color:rgba(233,236,244,.3);background:transparent;color:var(--on-navy-2)}
+.scene-tap .scene-steps li.past .n{border-color:var(--red-lite);background:rgba(217,43,48,.16);color:var(--white)}
+.scene-tap .scene-steps li.on .n{background:var(--red);border-color:var(--red);color:var(--white);box-shadow:0 0 0 6px rgba(217,43,48,.22)}
+.scene-tap .scene-steps h3{color:rgba(233,236,244,.6)}
+.scene-tap .scene-steps li.on h3{color:var(--white)}
+.scene-tap .scene-steps li:not(:last-child)::before,.scene-tap .scene-steps li:not(:last-child)::after{left:31px}
 @media (min-height:560px){
   .js-scene .scene{height:440vh;padding-block:0}
   .js-scene .scene-pin{position:sticky;top:var(--head);height:calc(var(--vh) - var(--head));padding-block:clamp(14px,3vh,36px);overflow:hidden}
@@ -654,6 +666,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       <div class="scene-copy">
         <div class="eyebrow">Как работаем</div>
         <h2 class="h2" id="process-h">От заявки до готовой формы</h2>
+        <p class="scene-tip" id="sceneTip" hidden>Нажмите на этап, чтобы посмотреть его ещё раз</p>
         <ol class="scene-steps" id="sceneSteps">
           <li><span class="n">1</span><div class="tx"><h3>Заявка</h3><p><span>Рассказываете, что нужно, сколько и к какому сроку.</span></p></div></li>
           <li><span class="n">2</span><div class="tx"><h3>Лекала</h3><p><span>Строим под ваш размерный ряд. Если есть образец, снимаем лекала с него.</span></p></div></li>
@@ -1530,11 +1543,32 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     };
 
     // после первого полного просмотра сцена больше не держит экран: блок становится обычным
-    let done = false, collapsed = false;
+    let done = false, collapsed = false, curP = 1, tw = 0;
+    // после первого показа этапы можно нажимать: картинка доматывается до выбранного этапа
+    const STOP = [.02, .3, .485, .64, .83, 1];
+    const goStep = i => {
+      if (!collapsed) return;
+      cancelAnimationFrame(tw);
+      const from = curP, to = STOP[i], dur = Math.min(1800, 500 + Math.abs(to - from) * 1700), t0 = performance.now();
+      const step = t => {
+        const k = clamp((t - t0) / dur);
+        curP = from + (to - from) * eio(k);
+        apply(curP);
+        if (k < 1) tw = requestAnimationFrame(step);
+      };
+      tw = requestAnimationFrame(step);
+    };
+    lis.forEach((li, i) => {
+      li.addEventListener('click', () => goStep(i));
+      li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goStep(i); } });
+    });
     const collapse = y => {
       collapsed = true; pinned = false;
       const below = y > top + h, oldH = h;
       root.classList.remove('js-scene');
+      root.classList.add('scene-tap');
+      $('#sceneTip').hidden = false;
+      lis.forEach(li => { li.setAttribute('role', 'button'); li.tabIndex = 0; });
       const nh = sec.offsetHeight;
       apply(1);
       if (below) {
@@ -1556,7 +1590,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     const measure = () => {
       top = docTop(sec); h = sec.offsetHeight; lastP = -1;
       pinned = getComputedStyle(pinEl).position === 'sticky';
-      if (!pinned) apply(collapsed ? 1 : .83);
+      if (!pinned) apply(collapsed ? curP : .83);
     };
     apply(0);
     return { update, measure };
@@ -1616,7 +1650,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       x = e.clientX; y = e.clientY;
       const t = e.target instanceof Element ? e.target : null;
       field = !!(t && t.closest('input,textarea,select'));
-      bigT = t && t.closest('a,button,summary,.spot') ? 1 : 0;
+      bigT = t && t.closest('a,button,summary,.spot,[role=button]') ? 1 : 0;
       if (!on) {
         on = true; root.classList.add('needle'); px = x; py = y;
         const [ex, ey] = eye();
