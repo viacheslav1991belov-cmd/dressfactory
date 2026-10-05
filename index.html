@@ -17,14 +17,36 @@
 <meta property="og:locale" content="ru_RU">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://dressfactory.ru/og.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Onest:wght@400;500;600;700;800&display=swap">
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js" async id="threeJs"></script>
+<link rel="canonical" href="https://dressfactory.ru/">
+<meta name="theme-color" content="#16224B">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preload" href="/fonts/onest.woff" as="font" type="font/woff" crossorigin>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "DressFactory",
+  "url": "https://dressfactory.ru/",
+  "logo": "https://dressfactory.ru/icon-512.png",
+  "image": "https://dressfactory.ru/og.jpg",
+  "email": "info@dressfactory.ru",
+  "description": "Швейное производство в Казани. Пошив формы для спасателей и образовательных учреждений под ключ, вышивка и термонаклейки.",
+  "address": { "@type": "PostalAddress", "addressLocality": "Казань", "addressCountry": "RU" },
+  "areaServed": { "@type": "Country", "name": "Россия" },
+  "foundingDate": "2023"
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.26/dist/lenis.min.js" async id="lenisJs"></script>
+<script src="/vendor/three.min.js" async id="threeJs"></script>
 <style>
 /* Цвета взяты с комбинезона: тёмно-синий корпус, красные рукава, серебро светоотражающей ленты.
    Первый экран: ткань комбинезона, которую можно потянуть мышкой. Сквозной мотив: нить и строчка. */
+@font-face{font-family:'Onest';src:url(/fonts/onest.woff) format('woff');font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:'Comfortaa';src:url(/fonts/comfortaa.woff) format('woff');font-weight:300 700;font-style:normal;font-display:swap}
 :root{
   --navy:#16224B;
   --navy-2:#1E2D60;
@@ -202,7 +224,7 @@ section{position:relative}
 .spot.on::after{background:var(--red);box-shadow:0 0 0 4px var(--white),0 4px 14px rgba(0,0,0,.35)}
 @keyframes pulse{0%{transform:scale(.6);opacity:.9}100%{transform:scale(2.2);opacity:0}}
 .spot-tip{position:absolute;z-index:6;left:var(--x);top:var(--y);transform:translate(-50%,calc(-100% - 26px));background:var(--white);color:var(--ink);font-size:14px;font-weight:600;padding:8px 14px;border-radius:999px;white-space:nowrap;pointer-events:none;box-shadow:0 8px 24px rgba(8,12,30,.25);transition:left .6s var(--ease),top .6s var(--ease),opacity .2s}
-.loupe{position:absolute;z-index:4;left:0;top:0;width:190px;height:190px;border-radius:50%;pointer-events:none;border:3px solid var(--white);box-shadow:0 18px 44px rgba(8,12,30,.5);background-color:var(--navy-3);background-image:url(img/vsks-trio.jpg);background-repeat:no-repeat;opacity:0;transform:translate3d(var(--lx,0),var(--ly,0),0) scale(.4);transition:opacity .2s,transform .22s var(--ease)}
+.loupe{position:absolute;z-index:4;left:0;top:0;width:190px;height:190px;border-radius:50%;pointer-events:none;border:3px solid var(--white);box-shadow:0 18px 44px rgba(8,12,30,.5);background-color:var(--navy-3);background-image:url(img/vsks-trio-1600.webp);background-repeat:no-repeat;opacity:0;transform:translate3d(var(--lx,0),var(--ly,0),0) scale(.4);transition:opacity .2s,transform .22s var(--ease)}
 .loupe::after{content:"";position:absolute;inset:7px;border-radius:50%;border:1.5px dashed rgba(217,43,48,.9)}
 .spot-wrap.zoom .loupe{opacity:1;transform:translate3d(var(--lx,0),var(--ly,0),0) scale(1)}
 .spot-wrap.zoom{cursor:none}
@@ -236,6 +258,26 @@ section{position:relative}
   .spot-tip{display:none}
 }
 
+
+/* работы на телефоне: карточки листаются пальцем */
+.works-m{display:none}
+@media(max-width:760px){
+  .works .feature,.works .cases{display:none}
+  .works-m{display:block;margin-inline:calc(-1 * var(--gutter))}
+  .wm-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding-inline:var(--gutter);padding:0 var(--gutter) 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .wm-track::-webkit-scrollbar{display:none}
+  .wm-card{flex:0 0 86%;scroll-snap-align:start;background:var(--white);border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 0 var(--line)}
+  .wm-ph{aspect-ratio:4/3;background:var(--navy-3)}
+  .wm-ph img{width:100%;height:100%;object-fit:cover}
+  .wm-body{padding:20px 20px 22px;display:flex;flex-direction:column;gap:10px}
+  .wm-body h3{font-size:21px;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+  .wm-body p{color:var(--ink-2);font-size:16px}
+  .wm-chips{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+  .wm-chips li{font-size:13px;font-weight:600;padding:6px 11px;border-radius:999px;background:var(--paper);color:var(--navy)}
+  .wm-dots{display:flex;justify-content:center;gap:8px;margin-top:18px}
+  .wm-dots i{width:8px;height:8px;border-radius:999px;background:#C9CDD6;transition:width .3s var(--ease),background .3s}
+  .wm-dots i.on{width:24px;background:var(--red)}
+}
 /* что шьём */
 .cat{display:grid;grid-template-columns:minmax(0,1.2fr) repeat(2,minmax(0,1fr));grid-template-rows:repeat(2,auto);gap:20px}
 .item{position:relative;border-radius:24px;overflow:hidden;background:var(--navy);color:var(--white);min-height:300px;display:flex;flex-direction:column;justify-content:flex-end;isolation:isolate;
@@ -433,6 +475,12 @@ section{position:relative}
 .field textarea{min-height:110px;resize:vertical}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--navy);background:var(--white);box-shadow:0 0 0 4px rgba(22,34,75,.08)}
 .form .btn{grid-column:1 / -1;min-height:60px;font-size:17px}
+.consent{grid-column:1 / -1;display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--ink-2);cursor:pointer;line-height:1.45}
+.consent input{flex:none;width:20px;height:20px;margin:0;accent-color:var(--red);cursor:pointer}
+.consent a{color:var(--navy);text-decoration:underline;text-underline-offset:2px}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.form{position:relative}
+.form .btn[disabled]{opacity:.65;cursor:wait}
 .err{grid-column:1 / -1;color:var(--red-ink);font-size:14px;font-weight:500}
 .form .done{grid-column:1 / -1;display:flex;flex-direction:column;align-items:flex-start;gap:14px}
 .form .done h3{font-size:24px;font-weight:800}
@@ -546,10 +594,10 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     <div class="trust">Нам доверяют <b>ВСКС</b><i></i><b>Россоюзспас</b><i></i><b>КГиМС</b></div>
   </div>
   <div class="fan" id="fan">
-    <figure style="--d:.12s"><img src="img/kgims-daily.jpg" alt="Курсанты КГиМС в повседневной форме" width="1600" height="1200" style="object-position:82% 50%"><figcaption><b>КГиМС</b>Повседневная форма</figcaption></figure>
-    <figure style="--d:0s"><img src="img/vsks-forest.jpg" alt="Студенты-спасатели ВСКС в комбинезонах и страховочных системах" width="2000" height="1334" style="object-position:50% 35%" fetchpriority="high"><figcaption><b>ВСКС</b>Комбинезон спасателя</figcaption></figure>
-    <figure style="--d:0s"><img src="img/kgims-bombers.jpg" alt="Студенты КГиМС в бомберах" width="1600" height="1066" style="object-position:38% 40%" fetchpriority="high"><figcaption><b>КГиМС</b>Бомберы</figcaption></figure>
-    <figure style="--d:.12s"><img src="img/rossoyuzspas-tshirt.jpg" alt="Спасатель в футболке Россоюзспаса" width="1344" height="768" style="object-position:57% 40%"><figcaption><b>Россоюзспас</b>Футболки</figcaption></figure>
+    <figure style="--d:.12s"><img src="img/kgims-daily-800.webp" srcset="img/kgims-daily-800.webp 800w, img/kgims-daily-1600.webp 1400w" sizes="(max-width:760px) 48vw, 320px" alt="Курсанты КГиМС в повседневной форме" width="1600" height="1200" style="object-position:82% 50%"><figcaption><b>КГиМС</b>Повседневная форма</figcaption></figure>
+    <figure style="--d:0s"><img src="img/vsks-forest-800.webp" srcset="img/vsks-forest-800.webp 800w, img/vsks-forest-1600.webp 1400w" sizes="(max-width:760px) 48vw, 320px" alt="Студенты-спасатели ВСКС в комбинезонах и страховочных системах" width="2000" height="1334" style="object-position:50% 35%" fetchpriority="high"><figcaption><b>ВСКС</b>Комбинезон спасателя</figcaption></figure>
+    <figure style="--d:0s"><img src="img/kgims-bombers-800.webp" srcset="img/kgims-bombers-800.webp 800w, img/kgims-bombers-1600.webp 1600w" sizes="(max-width:760px) 48vw, 320px" alt="Студенты КГиМС в бомберах" width="1600" height="1066" style="object-position:38% 40%" fetchpriority="high"><figcaption><b>КГиМС</b>Бомберы</figcaption></figure>
+    <figure style="--d:.12s"><img src="img/rossoyuzspas-tshirt-800.webp" srcset="img/rossoyuzspas-tshirt-800.webp 800w, img/rossoyuzspas-tshirt-1600.webp 1344w" sizes="(max-width:760px) 48vw, 320px" alt="Спасатель в футболке Россоюзспаса" width="1344" height="768" style="object-position:57% 40%"><figcaption><b>Россоюзспас</b>Футболки</figcaption></figure>
   </div>
 </section>
 
@@ -588,7 +636,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
     <article class="feature reveal" data-reveal>
       <div class="spot-wrap cut" id="spots">
-        <img src="img/vsks-trio.jpg" alt="Трое курсантов в комбинезонах ВСКС, вид спереди" width="1280" height="960" loading="lazy">
+        <img src="img/vsks-trio-1600.webp" srcset="img/vsks-trio-800.webp 800w, img/vsks-trio-1600.webp 1280w" sizes="(max-width:760px) 100vw, 50vw" alt="Трое курсантов в комбинезонах ВСКС, вид спереди" width="1280" height="960" loading="lazy">
         <div class="loupe" id="loupe" aria-hidden="true"></div>
         <button class="spot on" type="button" data-x="39" data-y="56" style="--x:39%;--y:56%" data-i="0" aria-label="Двухцветный крой"></button>
         <button class="spot" type="button" data-x="38.7" data-y="72" style="--x:38.7%;--y:72%" data-i="1" aria-label="Светоотражающая лента"></button>
@@ -618,7 +666,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
     <div class="cases">
       <article class="case reveal" data-reveal>
-        <div class="ph cut"><img src="img/kgims-daily.jpg" alt="Курсанты КГиМС в повседневной форме на построении" width="1600" height="1200" loading="lazy"></div>
+        <div class="ph cut"><img src="img/kgims-daily-1600.webp" srcset="img/kgims-daily-800.webp 800w, img/kgims-daily-1600.webp 1400w" sizes="(max-width:760px) 100vw, 50vw" alt="Курсанты КГиМС в повседневной форме на построении" width="1600" height="1200" loading="lazy"></div>
         <div class="case-body">
           <span class="tag">КГиМС</span>
           <h3>Парадная и повседневная форма для курсантов</h3>
@@ -626,13 +674,43 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
         </div>
       </article>
       <article class="case reveal" data-reveal>
-        <div class="ph cut"><img src="img/rossoyuzspas-tshirt.jpg" alt="Спасатель в синей футболке с надписью «Российский союз спасателей»" width="1344" height="768" loading="lazy" style="object-position:58% 40%"></div>
+        <div class="ph cut"><img src="img/rossoyuzspas-tshirt-1600.webp" srcset="img/rossoyuzspas-tshirt-800.webp 800w, img/rossoyuzspas-tshirt-1600.webp 1344w" sizes="(max-width:760px) 100vw, 50vw" alt="Спасатель в синей футболке с надписью «Российский союз спасателей»" width="1344" height="768" loading="lazy" style="object-position:58% 40%"></div>
         <div class="case-body">
           <span class="tag">Россоюзспас</span>
           <h3>Футболки с символикой</h3>
           <p>Футболки для мероприятий и работы. Логотип нанесли у себя в цехе.</p>
         </div>
       </article>
+    </div>
+    <div class="works-m" aria-label="Наши работы">
+      <div class="wm-track" id="wmTrack">
+        <article class="wm-card">
+          <div class="wm-ph"><img src="img/vsks-trio-800.webp" alt="Трое курсантов в комбинезонах ВСКС" width="800" height="600" loading="lazy"></div>
+          <div class="wm-body">
+            <span class="tag">ВСКС</span>
+            <h3>Комбинезон спасателя</h3>
+            <p>Сине-красные комбинезоны для студенческих отрядов спасателей. Сделали лекала под размерный ряд студентов и нанесли символику корпуса.</p>
+            <ul class="wm-chips"><li>Двухцветный крой</li><li>Светоотражающая лента</li><li>Шеврон</li><li>Карманы на молнии</li></ul>
+          </div>
+        </article>
+        <article class="wm-card">
+          <div class="wm-ph"><img src="img/kgims-daily-800.webp" alt="Курсанты КГиМС в повседневной форме на построении" width="800" height="600" loading="lazy"></div>
+          <div class="wm-body">
+            <span class="tag">КГиМС</span>
+            <h3>Парадная и повседневная форма для курсантов</h3>
+            <p>Два комплекта: парадный для построений и праздников и повседневный на каждый день.</p>
+          </div>
+        </article>
+        <article class="wm-card">
+          <div class="wm-ph"><img src="img/rossoyuzspas-tshirt-800.webp" alt="Спасатель в футболке Россоюзспаса" width="800" height="457" loading="lazy" style="object-position:58% 40%"></div>
+          <div class="wm-body">
+            <span class="tag">Россоюзспас</span>
+            <h3>Футболки с символикой</h3>
+            <p>Футболки для мероприятий и работы. Логотип нанесли у себя в цехе.</p>
+          </div>
+        </article>
+      </div>
+      <div class="wm-dots" id="wmDots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
     </div>
   </div>
 </section>
@@ -645,35 +723,35 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     </div>
     <div class="cat">
       <article class="item big reveal cut" data-reveal>
-        <img src="img/vsks-portrait.jpg" alt="Спасатель в комбинезоне со скрещёнными руками" width="1280" height="960" loading="lazy" style="object-position:57% 40%">
+        <img src="img/vsks-portrait-1600.webp" srcset="img/vsks-portrait-800.webp 800w, img/vsks-portrait-1600.webp 1280w" sizes="(max-width:760px) 100vw, 50vw" alt="Спасатель в комбинезоне со скрещёнными руками" width="1280" height="960" loading="lazy" style="object-position:57% 40%">
         <div class="item-body">
           <h3>Комбинезоны и спецодежда</h3>
           <p>Для спасателей, волонтёров и технических служб.</p>
         </div>
       </article>
       <article class="item reveal cut" data-reveal>
-        <img src="img/kgims-parade.jpg" alt="Курсанты КГиМС в парадной форме" width="1600" height="1067" loading="lazy" style="object-position:38% 40%">
+        <img src="img/kgims-parade-1600.webp" srcset="img/kgims-parade-800.webp 800w, img/kgims-parade-1600.webp 1400w" sizes="(max-width:760px) 100vw, 50vw" alt="Курсанты КГиМС в парадной форме" width="1600" height="1067" loading="lazy" style="object-position:38% 40%">
         <div class="item-body">
           <h3>Парадная и повседневная форма</h3>
           <p>Кители, брюки, рубашки, юбки для колледжей, кадетских классов и ведомств.</p>
         </div>
       </article>
       <article class="item reveal cut" data-reveal>
-        <img src="img/rossoyuzspas-tshirt.jpg" alt="" width="1344" height="768" loading="lazy" style="object-position:56% 35%">
+        <img src="img/rossoyuzspas-tshirt-1600.webp" srcset="img/rossoyuzspas-tshirt-800.webp 800w, img/rossoyuzspas-tshirt-1600.webp 1344w" sizes="(max-width:760px) 100vw, 50vw" alt="" width="1344" height="768" loading="lazy" style="object-position:56% 35%">
         <div class="item-body">
           <h3>Футболки и поло</h3>
           <p>С вашим логотипом.</p>
         </div>
       </article>
       <article class="item reveal cut" data-reveal>
-        <img src="img/kgims-bombers.jpg" alt="Студенты КГиМС в синем и красном бомберах с шевронами колледжа" width="1600" height="1066" loading="lazy" style="object-position:50% 40%">
+        <img src="img/kgims-bombers-1600.webp" srcset="img/kgims-bombers-800.webp 800w, img/kgims-bombers-1600.webp 1600w" sizes="(max-width:760px) 100vw, 50vw" alt="Студенты КГиМС в синем и красном бомберах с шевронами колледжа" width="1600" height="1066" loading="lazy" style="object-position:50% 40%">
         <div class="item-body">
           <h3>Бомберы и трикотаж</h3>
           <p>Бомберы, худи, свитшоты, лонгсливы для команд и мероприятий.</p>
         </div>
       </article>
       <article class="item reveal cut" data-reveal>
-        <img src="img/vsks-backs.jpg" alt="Надпись «Всероссийский студенческий корпус спасателей» на спине комбинезона" width="1280" height="853" loading="lazy" style="object-position:58% 40%">
+        <img src="img/vsks-backs-1600.webp" srcset="img/vsks-backs-800.webp 800w, img/vsks-backs-1600.webp 1280w" sizes="(max-width:760px) 100vw, 50vw" alt="Надпись «Всероссийский студенческий корпус спасателей» на спине комбинезона" width="1280" height="853" loading="lazy" style="object-position:58% 40%">
         <div class="item-body">
           <h3>Нанесение</h3>
           <p>Вышивка и термонаклейки любой сложности.</p>
@@ -838,7 +916,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
               <text class="oc-l" x="162" y="418">Срок</text><text class="oc-v" x="438" y="418">к 1 сентября</text>
             </g></g>
 
-            <image href="img/vsks-trio.jpg" x="0" y="0" width="600" height="760" preserveAspectRatio="xMidYMid slice" clip-path="url(#revealClip)"></image>
+            <image href="img/vsks-trio-800.webp" x="0" y="0" width="600" height="760" preserveAspectRatio="xMidYMid slice" clip-path="url(#revealClip)"></image>
           </svg>
           <div class="scene-chip" id="sceneChip" aria-hidden="true"><b>ВСКС</b>Готовая форма у заказчика</div>
         </div>
@@ -849,7 +927,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
 <section class="sec" id="factory" aria-labelledby="factory-h">
   <div class="wrap factory">
-    <div class="ph-box reveal cut" data-reveal><img id="factoryImg" src="img/factory.jpg" alt="Швеи за работой в цехе DressFactory, на столах сине-красные комбинезоны" width="1344" height="768" loading="lazy"></div>
+    <div class="ph-box reveal cut" data-reveal><img id="factoryImg" src="img/factory-1600.webp" srcset="img/factory-800.webp 800w, img/factory-1600.webp 1344w" sizes="(max-width:760px) 100vw, 50vw" alt="Швеи за работой в цехе DressFactory, на столах сине-красные комбинезоны" width="1344" height="768" loading="lazy"></div>
     <div class="factory-text reveal" data-reveal>
       <div class="eyebrow">Производство</div>
       <h2 class="h2" id="factory-h">Свой цех в Казани</h2>
@@ -921,6 +999,8 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       <div class="field"><label for="f-name">Имя</label><input id="f-name" name="name" autocomplete="name" placeholder="Как к вам обращаться"></div>
       <div class="field"><label for="f-contact">Телефон или почта</label><input id="f-contact" name="contact" autocomplete="email" placeholder="+7 … или name@mail.ru"></div>
       <div class="field full"><label for="f-msg">Комментарий</label><textarea id="f-msg" name="msg" placeholder="Что нужно сшить, сколько штук, к какой дате" data-lenis-prevent></textarea></div>
+      <label class="consent"><input type="checkbox" id="f-ok"><span>Согласен на обработку персональных данных по <a href="/privacy" target="_blank" rel="noopener">политике конфиденциальности</a></span></label>
+      <input class="hp" type="text" name="website" id="f-web" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="err" id="formErr" hidden></div>
       <button class="btn btn-red mag" type="submit">Отправить заявку</button>
     </form>
@@ -962,9 +1042,12 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
   /* ---------- плавная прокрутка ---------- */
   let lenis = null;
-  if (!rm && fine && window.Lenis) {
+  const startLenis = () => {
+    if (lenis || rm || !fine || !window.Lenis) return;
     try { lenis = new Lenis({ lerp: 0.11, smoothWheel: true, autoRaf: false }); } catch (e) { lenis = null; }
-  }
+  };
+  startLenis();
+  if (!lenis) { const lt = document.getElementById('lenisJs'); if (lt) lt.addEventListener('load', startLenis); }
   document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
     const id = a.getAttribute('href');
     if (id.length < 2) return;
@@ -2062,14 +2145,27 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     if (lenis) lenis.start();
     if (lastFocus) lastFocus.focus();
   };
-  form.addEventListener('submit', e => {
+  const sendBtn = form.querySelector('button[type=submit]');
+  form.addEventListener('submit', async e => {
     e.preventDefault();
     const v = id => document.getElementById(id).value.trim();
     const problems = [];
     if (!v('f-name')) problems.push('укажите имя');
     if (!v('f-contact')) problems.push('оставьте телефон или почту, чтобы мы могли ответить');
+    if (!$('#f-ok').checked) problems.push('отметьте согласие на обработку данных');
     if (problems.length) { err.textContent = 'Проверьте форму: ' + problems.join(', ') + '.'; err.hidden = false; return; }
     err.hidden = true;
+    sendBtn.disabled = true;
+    const label = sendBtn.textContent;
+    sendBtn.textContent = 'Отправляем…';
+    let ok = false;
+    try {
+      const r = await fetch('/api/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: v('f-name'), contact: v('f-contact'), msg: v('f-msg'), website: v('f-web') }) });
+      ok = r.ok;
+    } catch (_) { ok = false; }
+    sendBtn.disabled = false;
+    sendBtn.textContent = label;
+    if (!ok) { err.textContent = 'Не получилось отправить заявку. Попробуйте ещё раз или напишите нам на info@dressfactory.ru.'; err.hidden = false; return; }
     form.reset();
     lastFocus = document.activeElement;
     modal.hidden = false;
@@ -2079,6 +2175,14 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
   okClose.addEventListener('click', closeModal);
   modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
   addEventListener('keydown', e => { if (e.key === 'Escape' && !modal.hidden) closeModal(); });
+
+  /* ---------- работы на телефоне: точки под карточками ---------- */
+  const wmTrack = $('#wmTrack'), wmDots = [...$('#wmDots').children];
+  wmTrack.addEventListener('scroll', () => {
+    const c = wmTrack.children[0], step = c.offsetWidth + 12;
+    const i = Math.min(wmDots.length - 1, Math.round(wmTrack.scrollLeft / step));
+    wmDots.forEach((d, k) => d.classList.toggle('on', k === i));
+  }, { passive: true });
 
   /* ---------- запуск ---------- */
   measure();
