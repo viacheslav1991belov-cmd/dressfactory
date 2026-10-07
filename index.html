@@ -1684,6 +1684,7 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
 
     // после первого полного просмотра сцена больше не держит экран: блок становится обычным
     let done = false, collapsed = false, curP = 1, tw = 0;
+    let prevY = 0;
     // после первого показа этапы можно нажимать: картинка доматывается до выбранного этапа
     const STOP = [.02, .3, .485, .64, .83, 1];
     const goStep = i => {
@@ -1702,16 +1703,23 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
       li.addEventListener('click', () => goStep(i));
       li.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); goStep(i); } });
     });
-    const collapse = y => {
+    const stageEl = sec.querySelector('.scene-stage');
+    const collapse = (y, anchor) => {
       collapsed = true; pinned = false;
       const below = y > top + h, oldH = h;
+      const r0 = stageEl.getBoundingClientRect().top;
       root.classList.remove('js-scene');
       root.classList.add('scene-tap');
       $('#sceneTip').hidden = false;
       lis.forEach(li => { li.setAttribute('role', 'button'); li.tabIndex = 0; });
       const nh = sec.offsetHeight;
       apply(1);
-      if (below) {
+      if (anchor) {
+        // схлопнули прямо на экране: картинку оставляем там же, где она была
+        const t = stageEl.getBoundingClientRect().top + scrollY - r0;
+        if (lenis) lenis.scrollTo(t, { immediate: true, force: true });
+        else scrollTo({ top: t, behavior: 'instant' });
+      } else if (below) {
         const t = y - (oldH - nh);
         if (lenis) lenis.scrollTo(t, { immediate: true, force: true });
         else scrollTo({ top: t, behavior: 'instant' });
@@ -1720,7 +1728,13 @@ html.needle input,html.needle textarea,html.needle select{cursor:text!important}
     };
     const update = y => {
       if (sew) { sewUpdate(y); return; }
-      if (done && !collapsed) { if (y > top + h || y + vh < top) collapse(y); return; }
+      if (done && !collapsed) {
+        const up = y < prevY - 0.5; prevY = y;
+        if (y > top + h || y + vh < top) collapse(y);
+        else if (up) collapse(y, true);   // уже посмотрел всё: на подъёме вверх сцена не держит экран
+        return;
+      }
+      prevY = y;
       if (!pinned || y + vh < top - 200 || y > top + h + 200) return;
       const p = clamp((y + HEAD - top) / Math.max(1, h - (vh - HEAD)));
       if (p >= 1) done = true;
